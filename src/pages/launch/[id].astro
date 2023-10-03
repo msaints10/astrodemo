@@ -1,0 +1,41 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getLaunchById, getLatestLaunches } from "../../services/spacex";
+
+// el prerender es para que se genere la pagina en el build
+export const prerender = false;
+
+const { id } = Astro.params;
+
+let launch = null;
+if (id) {
+    launch = await getLaunchById({ id });
+}
+
+// esto es para que se genere la pagina en el build
+/*export async function getStaticPaths() {
+    // llamar a una API externa
+    // para saber que ids debe generar
+    const launches = await getLatestLaunches();
+
+    return launches.map((launch) => ({
+        params: {
+            id: launch.id,
+        },
+    }));
+}*/
+---
+
+<Layout title={`Lanzamiento ${id}`}>
+    <article class="flex gap-y-4 flex-col">
+        <img
+            class="w-52 h-auto"
+            src={launch?.links?.patch.small}
+            alt={launch?.name}
+        />
+        <h2 class="text-4xl text-white font-bold">
+            Lanzamiento #{launch?.flight_number}
+        </h2>
+        <p class="text-lg">{launch?.details}</p>
+    </article>
+</Layout>
